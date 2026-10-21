@@ -1,9 +1,10 @@
 ---
 id: TASK-2
 title: 'Router config: load and validate YAML'
-status: In Progress
+status: Done
 assignee: []
 created_date: '2026-10-21T04:25:00Z'
+updated_date: '2026-10-21T04:35:00Z'
 labels:
   - router
   - config
@@ -26,15 +27,29 @@ The router is driven by one YAML file (nodes, priorities, VRAM reserves, polling
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 config.example.yaml loads and every key defaults to the value documented in README
-- [ ] #2 Missing nodes, a node without name or ollama_url, and duplicate node names raise ConfigError naming the problem
-- [ ] #3 Trailing slashes on ollama_url and agent_url are stripped
-- [ ] #4 Nodes without an explicit priority are ordered by their position in the file
-- [ ] #5 Unit tests cover the defaults and every error case
+- [x] #1 config.example.yaml loads and every key defaults to the value documented in README
+- [x] #2 Missing nodes, a node without name or ollama_url, and duplicate node names raise ConfigError naming the problem
+- [x] #3 Trailing slashes on ollama_url and agent_url are stripped
+- [x] #4 Nodes without an explicit priority are ordered by their position in the file
+- [x] #5 Unit tests cover the defaults and every error case
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. Add tests/test_config.py covering defaults, example file, and every ConfigError case
+<!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
 
 <!-- SECTION:NOTES:BEGIN -->
 Implemented in src/nexus_router/config.py. Verified 2026-10-20: config.example.yaml loads via load_config() with the expected defaults. Remaining: unit tests.
+
+2026-10-21: Added tests/test_config.py (18 cases); all pass.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Config parsing/validation was already implemented; added tests/test_config.py covering defaults, config.example.yaml, stale_after_s derivation, missing nodes, missing name/ollama_url, duplicate names, slash stripping and priority ordering. 30 tests pass.
+<!-- SECTION:FINAL_SUMMARY:END -->

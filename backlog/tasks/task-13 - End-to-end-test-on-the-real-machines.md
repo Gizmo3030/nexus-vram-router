@@ -4,6 +4,7 @@ title: End-to-end test on the real machines
 status: To Do
 assignee: []
 created_date: '2026-10-21T04:25:00Z'
+updated_date: '2026-10-21T04:40:00Z'
 labels:
   - e2e
 dependencies:
@@ -32,3 +33,9 @@ The point of the project is that AI requests move off the gaming PC while a game
 - [ ] #4 An app such as Open WebUI pointed at the router lists models from both machines and streams chat normally
 - [ ] #5 Turning one PC off mid-session leaves the router serving from the other
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-21: Blocked: needs the real 4080/2070 Windows machines and Docker. Not started.
+<!-- SECTION:NOTES:END -->

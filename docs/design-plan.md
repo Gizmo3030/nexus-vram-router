@@ -3,7 +3,7 @@
 ## Context
 The motivating setup is two Windows PCs on a home LAN, both running Ollama: an RTX 4080 Super (16 GB) that is also the gaming PC, and an RTX 2070 Super (8 GB). The goal is one Ollama endpoint for all AI apps that sends each request to the best GPU: the 4080 when it has room for the model, and the 2070 when a game is holding the 4080's VRAM. Apps must not be able to tell it isn't a normal Ollama server. Any number of machines must be supported, not just two.
 
-Python 3.12+. Implementation status is tracked on the Backlog board; `config.py` and `agent.py` exist, the rest of the layout below is planned.
+Python 3.12+. Implementation status is tracked on the Backlog board.
 
 **Decisions:**
 - Both GPU machines run Windows.
@@ -57,7 +57,16 @@ README.md  # setup for the Windows PCs + the Docker host, and how to point apps 
 3. If none fit, return the candidate with the most effective free VRAM. Ollama will then run part of the model on the CPU, which is slower but still works.
 4. If no node has the model, send the request to the highest-priority healthy node so Ollama returns its own "model not found" error.
 
-A node configured without `agent_url` has unknown VRAM: it is healthy if Ollama responds, never counts as "fits" in step 2, and is ranked after all measured nodes in step 3.
+A node configured without `agent_url` has unknown VRAM: it is healthy if Ollama responds, never counts as "fits" in step 2 (unless the model is already loaded there), and is ranked after all measured nodes in step 3. The same applies to a node whose agent is down or returns an error.
+
+Further decisions:
+- With several GPUs on one node, free VRAM and Ollama-held VRAM are summed (Ollama can split a model across GPUs); busy uses the highest utilization.
+- Effective free VRAM is clamped at 0.
+- If every node that has the model is busy, the request is still routed to one of them (ranked by the normal fit rules) rather than failing, since a slow answer beats an error. Busy nodes otherwise rank after all idle nodes that have the model, and stay in the failover list.
+- If no node is healthy, all nodes are tried in priority order (poll data may just be stale); if none connects the client gets `502 {"error": ...}`.
+- The poller runs one independent loop per node, so a slow node never delays the others. A node is healthy when both `/api/tags` and `/api/ps` answered within `stale_after_s`; an agent failure only makes its VRAM unknown.
+- Aggregated endpoints (`/api/tags`, `/api/ps`, `/v1/models`) are fetched live from each healthy node and de-duplicated by (normalized) name, higher priority first. They carry no `X-Nexus-Node` header.
+- A node is marked busy only when its in-flight count is 0, so the streak resets while the router itself is using the node.
 
 A node is **busy** when GPU utilization is above `busy.gpu_util_percent` (default 85) for 3 polls in a row while the router has no requests running on it. This catches a game that uses little VRAM but a lot of GPU. Set the threshold to null to turn this off.
 

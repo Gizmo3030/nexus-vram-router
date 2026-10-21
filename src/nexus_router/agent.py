@@ -32,16 +32,17 @@ def _int_or_none(value: str) -> int | None:
 def parse_nvidia_smi(output: str) -> list[dict]:
     gpus = []
     for line in output.strip().splitlines():
-        parts = [p.strip() for p in line.split(",")]
-        if len(parts) < 6:
+        # GPU names can contain commas, so split the numeric fields off the end
+        # and keep the name's own spacing.
+        head_and_nums = line.rsplit(",", 4)
+        if len(head_and_nums) < 5 or "," not in head_and_nums[0]:
             continue
-        # GPU names can contain commas, so take the numeric fields from the end.
-        index, *name_parts = parts[:-4]
-        total, used, free, util = (_int_or_none(p) for p in parts[-4:])
+        index, name = head_and_nums[0].split(",", 1)
+        total, used, free, util = (_int_or_none(p.strip()) for p in head_and_nums[1:])
         gpus.append(
             {
-                "index": _int_or_none(index),
-                "name": ",".join(name_parts).strip(),
+                "index": _int_or_none(index.strip()),
+                "name": name.strip(),
                 "total_mb": total,
                 "used_mb": used,
                 "free_mb": free,

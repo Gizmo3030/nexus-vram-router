@@ -85,17 +85,16 @@ GPU machines can run Windows or Linux. The router doesn't need a GPU.
 setx OLLAMA_HOST 0.0.0.0
 ```
 
-**Run the agent.** Copy [`src/nexus_router/agent.py`](src/nexus_router/agent.py) to the machine; it's a single file with no dependencies. Then:
+**Install the agent.** Copy [`src/nexus_router/agent.py`](src/nexus_router/agent.py) and [`windows/install-agent.ps1`](windows/install-agent.ps1) into one folder on the machine (the agent is a single file with no dependencies), then run in an elevated PowerShell:
 
 ```powershell
-python agent.py --port 11500
+.\install-agent.ps1                                  # port 11500, no token
+.\install-agent.ps1 -Port 11500 -Token mysecret      # or with a shared secret (set agent_token in the router config)
 ```
 
-**Allow the agent through the firewall.** In an elevated PowerShell:
+The script copies the agent to `%ProgramData%\nexus-agent`, opens the port on the Private network profile, and registers a Scheduled Task that starts the agent at boot. Running it again replaces the task and the rule instead of adding more. Remove everything with `windows\uninstall-agent.ps1`. Python must be installed for all users (the task runs as SYSTEM); pass `-Python <path to pythonw.exe>` if `pythonw` isn't on `PATH`.
 
-```powershell
-New-NetFirewallRule -DisplayName "nexus-agent" -Direction Inbound -Protocol TCP -LocalPort 11500 -Action Allow -Profile Private
-```
+To try the agent without installing it: `python agent.py --port 11500`.
 
 From the router host, check that it responds:
 
@@ -103,7 +102,6 @@ From the router host, check that it responds:
 curl http://192.168.1.10:11500/vram
 ```
 
-> An installer script, `windows/install-agent.ps1`, is planned. It will add the firewall rule and a Scheduled Task that starts the agent at boot.
 
 ### 2. Run the router
 
@@ -322,13 +320,14 @@ Contributor and AI-agent conventions are in [AGENTS.md](AGENTS.md). Work is trac
 
 | Component | Status |
 |---|---|
-| VRAM agent (`agent.py`) | ✅ Working |
+| VRAM agent (`agent.py`) | ✅ Working (Windows/`pythonw` run not yet confirmed) |
 | Config loading (`config.py`, `config.example.yaml`) | ✅ Working |
-| Docker image and Compose file | ✅ Written. Runs once the router entry point lands |
-| Poller, estimator, selector | 🚧 In progress |
-| Ollama-compatible proxy and `main.py` | 🚧 In progress |
-| Tests | 🚧 In progress |
-| Windows install scripts | 📋 Planned |
+| Poller, estimator, selector, busy detection | ✅ Working |
+| Ollama-compatible proxy and `main.py` | ✅ Working |
+| Tests | ✅ Unit and mocked-node tests |
+| Windows install scripts | 🚧 Written, untested on Windows |
+| Docker image and Compose file | 🚧 Written, build not yet verified |
+| End-to-end test on the real machines | 📋 Not done |
 
 ## License
 

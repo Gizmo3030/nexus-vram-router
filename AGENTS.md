@@ -6,7 +6,7 @@ An Ollama-compatible HTTP proxy. Apps talk to it exactly as they would to Ollama
 
 ## Status
 
-Early implementation. Present: `src/nexus_router/config.py`, `src/nexus_router/agent.py`, `pyproject.toml`, `config.example.yaml`, `Dockerfile`, `.dockerignore`, `docker-compose.yml`, `README.md`. Planned but not yet written: `poller.py`, `estimator.py`, `selector.py`, `proxy.py`, `main.py`, `tests/`, `windows/*.ps1`. The Docker image builds but won't start until `main.py` exists; its healthcheck expects `GET /router/health`.
+Implemented: `config.py`, `agent.py`, `poller.py`, `estimator.py`, `selector.py`, `proxy.py`, `main.py`, `tests/`, `windows/*.ps1` (the scripts have never been run on Windows), plus the Docker files (image build not yet verified, the dev user can't reach the Docker socket). `GET /router/health` is the Docker healthcheck.
 
 Keep `README.md` (user-facing: setup, config reference, project status table) in sync when you add features, config keys, or endpoints. Check the Backlog board for what is in progress before starting new work.
 

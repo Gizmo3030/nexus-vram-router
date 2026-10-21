@@ -1,9 +1,10 @@
 ---
 id: TASK-7
 title: 'Proxy: aggregated, fan-out and passthrough endpoints'
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-10-21T04:25:00Z'
+updated_date: '2026-10-21T04:40:00Z'
 labels:
   - router
 dependencies:
@@ -23,9 +24,15 @@ Apps list and manage models through the same endpoint, so they must see every no
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 GET /api/tags, /api/ps and /v1/models combine the results of all healthy nodes, de-duplicated by model name, in the normal Ollama response format
-- [ ] #2 POST /api/pull and DELETE /api/delete run on every healthy node; the client sees the primary node streamed progress and the other results are logged
-- [ ] #3 GET / returns "Ollama is running" and HEAD / succeeds
-- [ ] #4 GET /api/version and any other path are forwarded to the highest-priority healthy node
-- [ ] #5 Tests cover aggregation with overlapping models, fan-out with one node down, and passthrough
+- [x] #1 GET /api/tags, /api/ps and /v1/models combine the results of all healthy nodes, de-duplicated by model name, in the normal Ollama response format
+- [x] #2 POST /api/pull and DELETE /api/delete run on every healthy node; the client sees the primary node streamed progress and the other results are logged
+- [x] #3 GET / returns "Ollama is running" and HEAD / succeeds
+- [x] #4 GET /api/version and any other path are forwarded to the highest-priority healthy node
+- [x] #5 Tests cover aggregation with overlapping models, fan-out with one node down, and passthrough
 <!-- AC:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Added aggregated (/api/tags, /api/ps, /v1/models), fan-out (/api/pull, /api/delete), root/HEAD and catch-all passthrough in proxy.py with tests in tests/test_proxy.py.
+<!-- SECTION:FINAL_SUMMARY:END -->

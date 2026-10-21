@@ -4,6 +4,7 @@ title: 'Docker: verify image build and healthy container'
 status: To Do
 assignee: []
 created_date: '2026-10-21T04:25:00Z'
+updated_date: '2026-10-21T04:40:00Z'
 labels:
   - docker
 dependencies:
@@ -33,3 +34,9 @@ Dockerfile, .dockerignore and docker-compose.yml were written before the router 
 - [ ] #3 The container process runs as the non-root nexus user
 - [ ] #4 A change to config.yaml takes effect after docker compose restart
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-10-21: Not verified: the dev user cannot reach /var/run/docker.sock (permission denied), so no build or compose up was possible. Needs a user in the docker group. Entry point now exists; HEALTHCHECK URL /router/health is implemented.
+<!-- SECTION:NOTES:END -->
