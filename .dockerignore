@@ -1,0 +1,31 @@
+# Only pyproject.toml, README.md, LICENSE and src/ are needed in the build context.
+.git
+.github
+.claude
+.gemini
+.venv
+venv
+**/__pycache__
+**/*.py[cod]
+.pytest_cache
+.mypy_cache
+.ruff_cache
+
+node_modules
+package.json
+package-lock.json
+backlog
+.backlog
+
+docs
+tests
+windows
+
+# Real configs can hold agent tokens; they are mounted at runtime, never baked in.
+config.yaml
+*.local.yaml
+.env
+
+Dockerfile
+docker-compose*.yml
+.dockerignore

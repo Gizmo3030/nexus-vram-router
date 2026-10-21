@@ -1,0 +1,37 @@
+# nexus-vram-router configuration.
+# Copy to config.yaml and edit. Only `nodes` is required; everything else shows its default.
+
+listen:
+  host: 0.0.0.0
+  port: 11434            # Ollama's default, so apps only need to change the host
+
+poll_interval_s: 2       # how often each node's agent and Ollama are polled
+# stale_after_s: 10      # node counts as down if not polled successfully for this long (default: max(10, 5 x poll_interval_s))
+
+agent_token: null        # set if agents run with --token; sent as "Authorization: Bearer <token>"
+
+estimate:
+  # VRAM needed for a model that isn't loaded yet = file size x overhead_factor + overhead_mb
+  overhead_factor: 1.2
+  overhead_mb: 512
+
+busy:
+  # A node is skipped when GPU utilization stays above this for consecutive_polls polls
+  # while the router has no requests running on it (e.g. a game). null disables the check.
+  gpu_util_percent: 85
+  consecutive_polls: 3
+
+# Nodes are tried in priority order (lowest first); the first one the model fits on wins.
+# Add as many as you like.
+nodes:
+  - name: rtx4080
+    ollama_url: http://192.168.1.10:11434
+    agent_url: http://192.168.1.10:11500
+    priority: 1
+    reserve_mb: 1024     # VRAM to always leave free on this node
+
+  - name: rtx2070
+    ollama_url: http://192.168.1.11:11434
+    agent_url: http://192.168.1.11:11500
+    priority: 2
+    reserve_mb: 512

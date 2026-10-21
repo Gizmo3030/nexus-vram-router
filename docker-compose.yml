@@ -1,0 +1,26 @@
+# Runs the router on an always-on box. GPU nodes run Ollama + nexus-agent themselves;
+# the router only needs to reach them over the LAN, so no GPU access is required here.
+#
+#   cp config.example.yaml config.yaml   # then edit node IPs
+#   docker compose up -d --build
+#
+# Apps then use http://<this-host>:11434 as their Ollama URL.
+
+services:
+  nexus-router:
+    build: .
+    image: nexus-vram-router:latest
+    container_name: nexus-router
+    restart: unless-stopped
+    ports:
+      # Keep the container side in sync with listen.port in config.yaml.
+      - "${NEXUS_PORT:-11434}:11434"
+    volumes:
+      - ./config.yaml:/config/config.yaml:ro
+    environment:
+      TZ: ${TZ:-UTC}
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

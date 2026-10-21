@@ -218,3 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# nexus-vram-router: real config (may contain agent_token); see config.example.yaml
+config.yaml
