@@ -221,3 +221,7 @@ __marimo__/
 
 # nexus-vram-router: real config (may contain agent_token); see config.example.yaml
 config.yaml
+
+# Local tool state
+node_modules/
+.claude/settings.local.json

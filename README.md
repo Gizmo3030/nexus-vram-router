@@ -2,6 +2,7 @@
 
 **One Ollama endpoint for all your GPUs. Each request goes to the machine that has room for the model right now.**
 
+[![tests](https://github.com/Gizmo3030/nexus-vram-router/actions/workflows/tests.yml/badge.svg)](https://github.com/Gizmo3030/nexus-vram-router/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)
 ![Status: in development](https://img.shields.io/badge/status-in%20development-orange.svg)
@@ -11,7 +12,7 @@ nexus-vram-router is a drop-in proxy for [Ollama](https://ollama.com). Point you
 It was built for a common home-lab situation: your best GPU is in your gaming PC. When you're not gaming, you want AI requests to use it. When a game is holding its VRAM, they should quietly move to a second machine instead of slowing the game down or failing.
 
 > [!IMPORTANT]
-> **This project is in early development and the router is not runnable yet.** The VRAM agent works today. The routing proxy, Windows install scripts and tests are in progress. See [Project status](#project-status).
+> **This project is in early development.** The agent, router and Docker image work and are covered by tests, but they haven't been tested end to end on real machines yet, and the Windows install scripts have never been run on Windows. See [Project status](#project-status).
 
 ---
 
