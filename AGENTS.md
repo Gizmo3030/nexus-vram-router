@@ -6,7 +6,7 @@ An Ollama-compatible HTTP proxy. Apps talk to it exactly as they would to Ollama
 
 ## Status
 
-Implemented: `config.py`, `agent.py`, `poller.py`, `estimator.py`, `selector.py`, `proxy.py`, `main.py`, `tests/`, `windows/*.ps1` (the scripts have never been run on Windows), plus the Docker files (image build not yet verified, the dev user can't reach the Docker socket). `GET /router/health` is the Docker healthcheck.
+Implemented: `config.py`, `agent.py`, `poller.py`, `estimator.py`, `selector.py`, `proxy.py`, `main.py`, `tests/`, `windows/*.ps1` (the scripts have never been run on Windows), plus the Docker files (image build and healthy container verified). `GET /router/health` is the Docker healthcheck.
 
 Keep `README.md` (user-facing: setup, config reference, project status table) in sync when you add features, config keys, or endpoints. Check the Backlog board for what is in progress before starting new work.
 

@@ -326,7 +326,7 @@ Contributor and AI-agent conventions are in [AGENTS.md](AGENTS.md). Work is trac
 | Ollama-compatible proxy and `main.py` | ✅ Working |
 | Tests | ✅ Unit and mocked-node tests |
 | Windows install scripts | 🚧 Written, untested on Windows |
-| Docker image and Compose file | 🚧 Written, build not yet verified |
+| Docker image and Compose file | ✅ Built and run: healthy, non-root |
 | End-to-end test on the real machines | 📋 Not done |
 
 ## License
