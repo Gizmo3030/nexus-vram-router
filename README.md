@@ -5,14 +5,14 @@
 [![tests](https://github.com/Gizmo3030/nexus-vram-router/actions/workflows/tests.yml/badge.svg)](https://github.com/Gizmo3030/nexus-vram-router/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)
-![Status: in development](https://img.shields.io/badge/status-in%20development-orange.svg)
+![Status: working](https://img.shields.io/badge/status-working-brightgreen.svg)
 
 nexus-vram-router is a drop-in proxy for [Ollama](https://ollama.com). Point your apps at it instead of at a single Ollama server. For every request it checks how much VRAM is free on each of your machines and sends the request to the fastest one the model fits on.
 
 It was built for a common home-lab situation: your best GPU is in your gaming PC. When you're not gaming, you want AI requests to use it. When a game is holding its VRAM, they should quietly move to a second machine instead of slowing the game down or failing.
 
-> [!IMPORTANT]
-> **This project is in early development.** The agent, router and Docker image work and are covered by tests, but they haven't been tested end to end on real machines yet, and the Windows install scripts have never been run on Windows. See [Project status](#project-status).
+> [!NOTE]
+> The agent and router are covered by tests, and the whole setup (router in Docker, two Windows GPU machines installed with the Windows scripts) has been tested end to end. See [Project status](#project-status).
 
 ---
 
@@ -86,6 +86,14 @@ GPU machines can run Windows or Linux. The router doesn't need a GPU.
 setx OLLAMA_HOST 0.0.0.0
 ```
 
+Then open Ollama's port in Windows Firewall (elevated PowerShell). The agent install script below only opens the agent's port, so without this rule the router's Ollama polls time out:
+
+```powershell
+New-NetFirewallRule -DisplayName "Ollama (TCP 11434)" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 11434 -Profile Private
+```
+
+The rule only applies on networks Windows treats as Private. Check with `Get-NetConnectionProfile`, and if the LAN shows as `Public`, switch it with `Set-NetConnectionProfile -InterfaceAlias "<name>" -NetworkCategory Private`.
+
 **Install the agent.** Copy [`src/nexus_router/agent.py`](src/nexus_router/agent.py) and [`windows/install-agent.ps1`](windows/install-agent.ps1) into one folder on the machine (the agent is a single file with no dependencies), then run in an elevated PowerShell:
 
 ```powershell
@@ -97,11 +105,14 @@ The script copies the agent to `%ProgramData%\nexus-agent`, opens the port on th
 
 To try the agent without installing it: `python agent.py --port 11500`.
 
-From the router host, check that it responds:
+From the router host, check that both respond:
 
 ```bash
-curl http://192.168.1.10:11500/vram
+curl http://192.168.1.10:11500/vram        # agent
+curl http://192.168.1.10:11434/api/tags    # Ollama
 ```
+
+A timeout usually means the firewall is dropping the connection; "connection refused" means Ollama is still listening only on localhost (restart it after setting `OLLAMA_HOST`).
 
 
 ### 2. Run the router
@@ -321,14 +332,14 @@ Contributor and AI-agent conventions are in [AGENTS.md](AGENTS.md). Work is trac
 
 | Component | Status |
 |---|---|
-| VRAM agent (`agent.py`) | ✅ Working (Windows/`pythonw` run not yet confirmed) |
+| VRAM agent (`agent.py`) | ✅ Working, including on Windows under `pythonw` |
 | Config loading (`config.py`, `config.example.yaml`) | ✅ Working |
 | Poller, estimator, selector, busy detection | ✅ Working |
 | Ollama-compatible proxy and `main.py` | ✅ Working |
 | Tests | ✅ Unit and mocked-node tests |
-| Windows install scripts | 🚧 Written, untested on Windows |
+| Windows install scripts | ✅ Working on Windows |
 | Docker image and Compose file | ✅ Built and run: healthy, non-root |
-| End-to-end test on the real machines | 📋 Not done |
+| End-to-end test on the real machines | ✅ Done: router in Docker, two Windows GPU nodes |
 
 ## License
 
